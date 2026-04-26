@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.BizPatrolRouteMapper">
+
+    <resultMap id="BizPatrolRouteResult" type="BizPatrolRoute">
+        <id property="routeId" column="route_id"/>
+        <result property="routeName" column="route_name"/>
+        <result property="estDurationMinutes" column="est_duration_minutes"/>
+        <result property="altitude" column="altitude"/>
+        <result property="remark" column="remark"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <resultMap id="BizPatrolRoutePointResult" type="BizPatrolRoutePoint">
+        <id property="pointId" column="point_id"/>
+        <result property="routeId" column="route_id"/>
+        <result property="seq" column="seq"/>
+        <result property="lng" column="lng"/>
+        <result property="lat" column="lat"/>
+    </resultMap>
+
+    <sql id="selectBizPatrolRouteVo">
+        select route_id, route_name, est_duration_minutes, altitude, remark, create_by, create_time, update_by, update_time
+        from biz_patrol_route
+    </sql>
+
+    <select id="selectBizPatrolRouteById" parameterType="Long" resultMap="BizPatrolRouteResult">
+        <include refid="selectBizPatrolRouteVo"/>
+        where route_id = #{routeId}
+    </select>
+
+    <select id="selectBizPatrolRouteList" parameterType="BizPatrolRoute" resultMap="BizPatrolRouteResult">
+        <include refid="selectBizPatrolRouteVo"/>
+        <where>
+            <if test="routeName != null and routeName != ''">and route_name like concat('%', #{routeName}, '%')</if>
+        </where>
+        order by route_id desc
+    </select>
+
+    <select id="selectBizPatrolRouteByName" parameterType="String" resultMap="BizPatrolRouteResult">
+        <include refid="selectBizPatrolRouteVo"/>
+        where route_name = #{routeName}
+        limit 1
+    </select>
+
+    <select id="selectBizPatrolRoutePointsByRouteId" parameterType="Long" resultMap="BizPatrolRoutePointResult">
+        select point_id, route_id, seq, lng, lat
+        from biz_patrol_route_point
+        where route_id = #{routeId}
+        order by seq asc
+    </select>
+
+    <insert id="insertBizPatrolRoute" parameterType="BizPatrolRoute" useGeneratedKeys="true" keyProperty="routeId">
+        insert into biz_patrol_route(route_name, est_duration_minutes, altitude, remark, create_by, create_time)
+        values(#{routeName}, #{estDurationMinutes}, #{altitude}, #{remark}, #{createBy}, sysdate())
+    </insert>
+
+    <update id="updateBizPatrolRoute" parameterType="BizPatrolRoute">
+        update biz_patrol_route
+        <set>
+            <if test="routeName != null and routeName != ''">route_name = #{routeName},</if>
+            <if test="estDurationMinutes != null">est_duration_minutes = #{estDurationMinutes},</if>
+            <if test="altitude != null">altitude = #{altitude},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            update_time = sysdate()
+        </set>
+        where route_id = #{routeId}
+    </update>
+
+    <delete id="deleteBizPatrolRouteById" parameterType="Long">
+        delete from biz_patrol_route where route_id = #{routeId}
+    </delete>
+
+    <delete id="deleteBizPatrolRouteByIds" parameterType="Long">
+        delete from biz_patrol_route where route_id in
+        <foreach collection="array" item="routeId" open="(" separator="," close=")">
+            #{routeId}
+        </foreach>
+    </delete>
+
+    <insert id="insertBizPatrolRoutePoint" parameterType="BizPatrolRoutePoint" useGeneratedKeys="true" keyProperty="pointId">
+        insert into biz_patrol_route_point(route_id, seq, lng, lat)
+        values(#{routeId}, #{seq}, #{lng}, #{lat})
+    </insert>
+
+    <delete id="deleteBizPatrolRoutePointByRouteId" parameterType="Long">
+        delete from biz_patrol_route_point where route_id = #{routeId}
+    </delete>
+
+</mapper>

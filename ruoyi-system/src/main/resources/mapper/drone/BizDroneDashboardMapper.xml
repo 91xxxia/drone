@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.BizDroneDashboardMapper">
+
+    <select id="selectDashboardStats" resultType="java.util.HashMap">
+        select
+            (select count(1) from biz_usv_device) as deviceCount,
+            (select count(1) from biz_patrol_route) as routeCount,
+            (select count(1) from biz_patrol_task) as taskCount,
+            (select count(1) from biz_patrol_result) as resultCount
+    </select>
+
+</mapper>

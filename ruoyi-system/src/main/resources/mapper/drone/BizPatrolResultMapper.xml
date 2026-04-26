@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.BizPatrolResultMapper">
+
+    <resultMap id="BizPatrolResultResult" type="BizPatrolResult">
+        <id property="resultId" column="result_id"/>
+        <result property="resultCode" column="result_code"/>
+        <result property="taskId" column="task_id"/>
+        <result property="taskName" column="task_name"/>
+        <result property="deviceId" column="device_id"/>
+        <result property="deviceName" column="device_name"/>
+        <result property="routeId" column="route_id"/>
+        <result property="routeName" column="route_name"/>
+        <result property="durationMinutes" column="duration_minutes"/>
+        <result property="completedTime" column="completed_time"/>
+        <result property="executor" column="executor"/>
+        <result property="overview" column="overview"/>
+        <result property="findings" column="findings"/>
+        <result property="handling" column="handling"/>
+        <result property="remark" column="remark"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="selectBizPatrolResultVo">
+        select result_id, result_code, task_id, task_name, device_id, device_name, route_id, route_name,
+               duration_minutes, completed_time, executor, overview, findings, handling, remark,
+               create_by, create_time, update_by, update_time
+        from biz_patrol_result
+    </sql>
+
+    <select id="selectBizPatrolResultById" parameterType="Long" resultMap="BizPatrolResultResult">
+        <include refid="selectBizPatrolResultVo"/>
+        where result_id = #{resultId}
+    </select>
+
+    <select id="selectBizPatrolResultByTaskId" parameterType="Long" resultMap="BizPatrolResultResult">
+        <include refid="selectBizPatrolResultVo"/>
+        where task_id = #{taskId}
+        limit 1
+    </select>
+
+    <select id="selectBizPatrolResultList" parameterType="BizPatrolResult" resultMap="BizPatrolResultResult">
+        <include refid="selectBizPatrolResultVo"/>
+        <where>
+            <if test="resultCode != null and resultCode != ''">and result_code like concat('%', #{resultCode}, '%')</if>
+            <if test="taskName != null and taskName != ''">and task_name like concat('%', #{taskName}, '%')</if>
+            <if test="deviceName != null and deviceName != ''">and device_name like concat('%', #{deviceName}, '%')</if>
+            <if test="executor != null and executor != ''">and executor like concat('%', #{executor}, '%')</if>
+            <if test="params.beginTime != null and params.beginTime != ''">and date_format(completed_time,'%Y%m%d') &gt;= date_format(#{params.beginTime},'%Y%m%d')</if>
+            <if test="params.endTime != null and params.endTime != ''">and date_format(completed_time,'%Y%m%d') &lt;= date_format(#{params.endTime},'%Y%m%d')</if>
+        </where>
+        order by result_id desc
+    </select>
+
+    <insert id="insertBizPatrolResult" parameterType="BizPatrolResult" useGeneratedKeys="true" keyProperty="resultId">
+        insert into biz_patrol_result(result_code, task_id, task_name, device_id, device_name, route_id, route_name,
+                                     duration_minutes, completed_time, executor, overview, findings, handling, remark,
+                                     create_by, create_time)
+        values(#{resultCode}, #{taskId}, #{taskName}, #{deviceId}, #{deviceName}, #{routeId}, #{routeName},
+               #{durationMinutes}, #{completedTime}, #{executor}, #{overview}, #{findings}, #{handling}, #{remark},
+               #{createBy}, sysdate())
+    </insert>
+
+    <update id="updateBizPatrolResult" parameterType="BizPatrolResult">
+        update biz_patrol_result
+        <set>
+            <if test="overview != null">overview = #{overview},</if>
+            <if test="findings != null">findings = #{findings},</if>
+            <if test="handling != null">handling = #{handling},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            update_time = sysdate()
+        </set>
+        where result_id = #{resultId}
+    </update>
+
+    <delete id="deleteBizPatrolResultByIds" parameterType="Long">
+        delete from biz_patrol_result where result_id in
+        <foreach collection="array" item="resultId" open="(" separator="," close=")">
+            #{resultId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteBizPatrolResultByTaskIds" parameterType="Long">
+        delete from biz_patrol_result where task_id in
+        <foreach collection="array" item="taskId" open="(" separator="," close=")">
+            #{taskId}
+        </foreach>
+    </delete>
+
+</mapper>

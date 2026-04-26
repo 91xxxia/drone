@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.BizPatrolTaskMapper">
+
+    <resultMap id="BizPatrolTaskResult" type="BizPatrolTask">
+        <id property="taskId" column="task_id"/>
+        <result property="taskCode" column="task_code"/>
+        <result property="taskName" column="task_name"/>
+        <result property="executor" column="executor"/>
+        <result property="plannedStartTime" column="planned_start_time"/>
+        <result property="taskDesc" column="task_desc"/>
+        <result property="deviceId" column="device_id"/>
+        <result property="routeId" column="route_id"/>
+        <result property="status" column="status"/>
+        <result property="progress" column="progress"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="deviceName" column="device_name"/>
+        <result property="routeName" column="route_name"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="selectBizPatrolTaskVo">
+        select t.task_id, t.task_code, t.task_name, t.executor, t.planned_start_time, t.task_desc, t.device_id,
+               t.route_id, t.status, t.progress, t.start_time, t.end_time, t.create_by, t.create_time, t.update_by, t.update_time,
+               d.device_name, r.route_name
+        from biz_patrol_task t
+        left join biz_usv_device d on d.device_id = t.device_id
+        left join biz_patrol_route r on r.route_id = t.route_id
+    </sql>
+
+    <select id="selectBizPatrolTaskById" parameterType="Long" resultMap="BizPatrolTaskResult">
+        <include refid="selectBizPatrolTaskVo"/>
+        where t.task_id = #{taskId}
+    </select>
+
+    <select id="selectBizPatrolTaskList" parameterType="BizPatrolTask" resultMap="BizPatrolTaskResult">
+        <include refid="selectBizPatrolTaskVo"/>
+        <where>
+            <if test="taskName != null and taskName != ''">and t.task_name like concat('%', #{taskName}, '%')</if>
+            <if test="executor != null and executor != ''">and t.executor like concat('%', #{executor}, '%')</if>
+            <if test="status != null and status != ''">and t.status = #{status}</if>
+            <if test="deviceName != null and deviceName != ''">and d.device_name like concat('%', #{deviceName}, '%')</if>
+            <if test="params.beginTime != null and params.beginTime != ''">and date_format(t.planned_start_time,'%Y%m%d') &gt;= date_format(#{params.beginTime},'%Y%m%d')</if>
+            <if test="params.endTime != null and params.endTime != ''">and date_format(t.planned_start_time,'%Y%m%d') &lt;= date_format(#{params.endTime},'%Y%m%d')</if>
+        </where>
+        order by t.task_id desc
+    </select>
+
+    <insert id="insertBizPatrolTask" parameterType="BizPatrolTask" useGeneratedKeys="true" keyProperty="taskId">
+        insert into biz_patrol_task(task_code, task_name, executor, planned_start_time, task_desc, device_id, route_id, status, progress, create_by, create_time)
+        values(#{taskCode}, #{taskName}, #{executor}, #{plannedStartTime}, #{taskDesc}, #{deviceId}, #{routeId}, #{status}, #{progress}, #{createBy}, sysdate())
+    </insert>
+
+    <update id="updateBizPatrolTask" parameterType="BizPatrolTask">
+        update biz_patrol_task
+        <set>
+            <if test="taskName != null and taskName != ''">task_name = #{taskName},</if>
+            <if test="executor != null">executor = #{executor},</if>
+            <if test="plannedStartTime != null">planned_start_time = #{plannedStartTime},</if>
+            <if test="taskDesc != null">task_desc = #{taskDesc},</if>
+            <if test="deviceId != null">device_id = #{deviceId},</if>
+            <if test="routeId != null">route_id = #{routeId},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            update_time = sysdate()
+        </set>
+        where task_id = #{taskId}
+    </update>
+
+    <update id="updateBizPatrolTaskStatus" parameterType="BizPatrolTask">
+        update biz_patrol_task
+        <set>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="progress != null">progress = #{progress},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            update_time = sysdate()
+        </set>
+        where task_id = #{taskId}
+    </update>
+
+    <delete id="deleteBizPatrolTaskByIds" parameterType="Long">
+        delete from biz_patrol_task where task_id in
+        <foreach collection="array" item="taskId" open="(" separator="," close=")">
+            #{taskId}
+        </foreach>
+    </delete>
+
+    <insert id="insertBizPatrolTaskLog" parameterType="BizPatrolTaskLog" useGeneratedKeys="true" keyProperty="logId">
+        insert into biz_patrol_task_log(task_id, from_status, to_status, operate_by, operate_time, remark)
+        values(#{taskId}, #{fromStatus}, #{toStatus}, #{operateBy}, #{operateTime}, #{remark})
+    </insert>
+
+    <select id="countRunningOrPendingTaskByDeviceId" parameterType="Long" resultType="int">
+        select count(1)
+        from biz_patrol_task
+        where device_id = #{deviceId}
+          and status in ('pending', 'running')
+    </select>
+
+    <select id="countRunningOrPendingTaskByRouteId" parameterType="Long" resultType="int">
+        select count(1)
+        from biz_patrol_task
+        where route_id = #{routeId}
+          and status in ('pending', 'running')
+    </select>
+
+</mapper>
