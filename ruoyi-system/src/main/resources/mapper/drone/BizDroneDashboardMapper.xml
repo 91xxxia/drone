@@ -4,6 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.system.mapper.BizDroneDashboardMapper">
 
+    <!-- 查询仪表板统计数据 -->
     <select id="selectDashboardStats" resultType="java.util.HashMap">
         select
             (select count(1) from biz_usv_device) as deviceCount,

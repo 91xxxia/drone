@@ -10,6 +10,8 @@ public interface IBizPatrolResultService
 
     List<BizPatrolResult> selectBizPatrolResultList(BizPatrolResult query);
 
+    BizPatrolResult selectBizPatrolResultDetailById(Long resultId);
+
     int updateBizPatrolResult(BizPatrolResult result);
 
     int deleteBizPatrolResultByIds(Long[] resultIds);

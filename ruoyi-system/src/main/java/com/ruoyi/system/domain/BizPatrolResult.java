@@ -32,7 +32,10 @@ public class BizPatrolResult extends BaseEntity
     private String routeName;
 
     @Excel(name = "巡防时长(分钟)")
-    private Integer durationMinutes;
+    private Double durationMinutes;
+
+    @Excel(name = "总距离(公里)")
+    private Double totalDistance;
 
     @Excel(name = "完成时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     private Date completedTime;
@@ -49,6 +52,10 @@ public class BizPatrolResult extends BaseEntity
     private String handling;
 
     private String remark;
+
+    private java.util.List<BizPatrolRoutePoint> routePoints;
+
+    private java.util.List<BizPatrolResultMedia> mediaList;
 
     public Long getResultId()
     {
@@ -130,14 +137,24 @@ public class BizPatrolResult extends BaseEntity
         this.routeName = routeName;
     }
 
-    public Integer getDurationMinutes()
+    public Double getDurationMinutes()
     {
         return durationMinutes;
     }
 
-    public void setDurationMinutes(Integer durationMinutes)
+    public void setDurationMinutes(Double durationMinutes)
     {
         this.durationMinutes = durationMinutes;
+    }
+
+    public Double getTotalDistance()
+    {
+        return totalDistance;
+    }
+
+    public void setTotalDistance(Double totalDistance)
+    {
+        this.totalDistance = totalDistance;
     }
 
     public Date getCompletedTime()
@@ -202,6 +219,26 @@ public class BizPatrolResult extends BaseEntity
         this.remark = remark;
     }
 
+    public java.util.List<BizPatrolRoutePoint> getRoutePoints()
+    {
+        return routePoints;
+    }
+
+    public void setRoutePoints(java.util.List<BizPatrolRoutePoint> routePoints)
+    {
+        this.routePoints = routePoints;
+    }
+
+    public java.util.List<BizPatrolResultMedia> getMediaList()
+    {
+        return mediaList;
+    }
+
+    public void setMediaList(java.util.List<BizPatrolResultMedia> mediaList)
+    {
+        this.mediaList = mediaList;
+    }
+
     @Override
     public String toString()
     {
@@ -215,6 +252,7 @@ public class BizPatrolResult extends BaseEntity
             .append("routeId", getRouteId())
             .append("routeName", getRouteName())
             .append("durationMinutes", getDurationMinutes())
+            .append("totalDistance", getTotalDistance())
             .append("completedTime", getCompletedTime())
             .append("executor", getExecutor())
             .append("overview", getOverview())

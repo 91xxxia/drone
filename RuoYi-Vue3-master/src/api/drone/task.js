@@ -45,6 +45,21 @@ export function finishTask(taskId) {
   })
 }
 
+export function getTaskProgress(taskId) {
+  return request({
+    url: '/drone/task/progress/' + taskId,
+    method: 'get'
+  })
+}
+
+export function updateTaskProgress(data) {
+  return request({
+    url: '/drone/task/progress',
+    method: 'put',
+    data
+  })
+}
+
 export function cancelTask(taskId) {
   return request({
     url: '/drone/task/cancel/' + taskId,

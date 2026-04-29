@@ -14,6 +14,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="routeId" column="route_id"/>
         <result property="routeName" column="route_name"/>
         <result property="durationMinutes" column="duration_minutes"/>
+        <result property="totalDistance" column="total_distance"/>
         <result property="completedTime" column="completed_time"/>
         <result property="executor" column="executor"/>
         <result property="overview" column="overview"/>
@@ -28,7 +29,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <sql id="selectBizPatrolResultVo">
         select result_id, result_code, task_id, task_name, device_id, device_name, route_id, route_name,
-               duration_minutes, completed_time, executor, overview, findings, handling, remark,
+               duration_minutes, total_distance, completed_time, executor, overview, findings, handling, remark,
                create_by, create_time, update_by, update_time
         from biz_patrol_result
     </sql>
@@ -59,10 +60,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <insert id="insertBizPatrolResult" parameterType="BizPatrolResult" useGeneratedKeys="true" keyProperty="resultId">
         insert into biz_patrol_result(result_code, task_id, task_name, device_id, device_name, route_id, route_name,
-                                     duration_minutes, completed_time, executor, overview, findings, handling, remark,
+                                     duration_minutes, total_distance, completed_time, executor, overview, findings, handling, remark,
                                      create_by, create_time)
         values(#{resultCode}, #{taskId}, #{taskName}, #{deviceId}, #{deviceName}, #{routeId}, #{routeName},
-               #{durationMinutes}, #{completedTime}, #{executor}, #{overview}, #{findings}, #{handling}, #{remark},
+               #{durationMinutes}, #{totalDistance}, #{completedTime}, #{executor}, #{overview}, #{findings}, #{handling}, #{remark},
                #{createBy}, sysdate())
     </insert>
 
@@ -92,5 +93,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{taskId}
         </foreach>
     </delete>
+
+    <resultMap id="BizPatrolResultMediaResult" type="BizPatrolResultMedia">
+        <id property="mediaId" column="media_id"/>
+        <result property="resultId" column="result_id"/>
+        <result property="fileUrl" column="file_url"/>
+        <result property="aiTag" column="ai_tag"/>
+        <result property="bboxJson" column="bbox_json"/>
+    </resultMap>
+
+    <select id="selectBizPatrolResultMediaByResultId" parameterType="Long" resultMap="BizPatrolResultMediaResult">
+        select media_id, result_id, file_url, ai_tag, bbox_json
+        from biz_patrol_result_media
+        where result_id = #{resultId}
+        order by media_id asc
+    </select>
 
 </mapper>

@@ -84,6 +84,21 @@ public class BizPatrolTaskController extends BaseController
         return toAjax(taskService.cancelTask(taskId, getUsername()));
     }
 
+    @PreAuthorize("@ss.hasPermi('drone:task:query')")
+    @GetMapping("/progress/{taskId}")
+    public AjaxResult getProgress(@PathVariable Long taskId)
+    {
+        return success(taskService.getTaskProgress(taskId));
+    }
+
+    @Log(title = "巡防任务", businessType = BusinessType.UPDATE)
+    @PreAuthorize("@ss.hasPermi('drone:task:edit')")
+    @PutMapping("/progress")
+    public AjaxResult updateProgress(@RequestBody BizPatrolTask task)
+    {
+        return toAjax(taskService.updateTaskProgress(task.getTaskId(), task.getProgress(), getUsername()));
+    }
+
     @Log(title = "巡防任务", businessType = BusinessType.DELETE)
     @PreAuthorize("@ss.hasPermi('drone:task:remove')")
     @DeleteMapping("/{taskIds}")

@@ -21,4 +21,8 @@ public interface IBizPatrolTaskService
     int finishTask(Long taskId, String operator);
 
     int cancelTask(Long taskId, String operator);
+
+    Integer getTaskProgress(Long taskId);
+
+    int updateTaskProgress(Long taskId, Integer progress, String operator);
 }

@@ -15,6 +15,13 @@ export function getResult(resultId) {
   })
 }
 
+export function getResultDetail(resultId) {
+  return request({
+    url: '/drone/result/detail/' + resultId,
+    method: 'get'
+  })
+}
+
 export function updateResult(data) {
   return request({
     url: '/drone/result',

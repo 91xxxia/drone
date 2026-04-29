@@ -1,6 +1,7 @@
 package com.ruoyi.system.mapper;
 
 import com.ruoyi.system.domain.BizPatrolResult;
+import com.ruoyi.system.domain.BizPatrolResultMedia;
 
 import java.util.List;
 
@@ -19,4 +20,6 @@ public interface BizPatrolResultMapper
     int deleteBizPatrolResultByIds(Long[] resultIds);
 
     int deleteBizPatrolResultByTaskIds(Long[] taskIds);
+
+    List<BizPatrolResultMedia> selectBizPatrolResultMediaByResultId(Long resultId);
 }

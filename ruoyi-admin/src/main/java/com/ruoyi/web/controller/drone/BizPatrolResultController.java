@@ -45,6 +45,13 @@ public class BizPatrolResultController extends BaseController
         return success(resultService.selectBizPatrolResultById(resultId));
     }
 
+    @PreAuthorize("@ss.hasPermi('drone:result:detail')")
+    @GetMapping("/detail/{resultId}")
+    public AjaxResult getDetail(@PathVariable Long resultId)
+    {
+        return success(resultService.selectBizPatrolResultDetailById(resultId));
+    }
+
     @Log(title = "巡防结果", businessType = BusinessType.EXPORT)
     @PreAuthorize("@ss.hasPermi('drone:result:export')")
     @PostMapping("/export")

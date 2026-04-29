@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mysql -u root -padmin drone -e \"DESCRIBE biz_patrol_result;\")"
+    ]
+  }
+}
